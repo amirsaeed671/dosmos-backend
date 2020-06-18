@@ -1,5 +1,5 @@
-const {check, validationResults} = require('express-validator/check')
-const router = require('express').Router
+const {check, validationResult} = require('express-validator')
+const router = require('express').Router()
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const User = require('../db/models/user')
@@ -7,13 +7,13 @@ const User = require('../db/models/user')
 router.post(
   '/signup',
   [
-    check('username', 'Please Enter a Valid Username').isNot().isEmpty(),
+    check('username', 'Please Enter a Valid Username').not().isEmpty(),
     check('password', 'Please enter a valid password').isLength({
       min: 8,
     }),
   ],
   async (req, res) => {
-    const errors = validationResults(req)
+    const errors = validationResult(req)
     if (!errors.isEmpty()) {
       return res.status(400).json({
         errors: errors.array(),
@@ -48,7 +48,13 @@ router.post(
           throw err
         }
         res.status(201).json({
-          token,
+          status: 201,
+          message: 'User successfuly created',
+          data: {
+            id: user.id,
+            username: user.username,
+            token,
+          },
         })
       })
     } catch (error) {
@@ -56,3 +62,5 @@ router.post(
     }
   },
 )
+
+module.exports = router
