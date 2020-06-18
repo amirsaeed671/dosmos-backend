@@ -1,22 +1,25 @@
-const express = require('express');
-const cors = require('cors');
-const app = express();
+require('dotenv').config()
 
-require('dotenv').config();
+const express = require('express')
+const cors = require('cors')
+const connectDB = require('./db/config')
+const app = express()
 
 // experss middlewares
-app.use(cors());
+app.use(cors())
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3000
 
 app.post('/user/auth', (req, res) => {
-    res.json('hello');
-});
+  res.json('hello')
+})
 
 app.post('/user/signup', (req, res) => {
-    res.json('hello');
-});
+  res.json('hello')
+})
 
-app.listen(port, () => {
-    console.log('App listening on port : ', port);
-});
+connectDB(() => {
+  app.listen(port, () => {
+    console.log('App listening on port : ', port)
+  })
+})
