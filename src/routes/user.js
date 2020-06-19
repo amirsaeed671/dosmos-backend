@@ -3,6 +3,7 @@ const router = require('express').Router()
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const User = require('../db/models/user')
+const auth = require('../middleware/auth')
 
 router.post(
   '/signup',
@@ -16,6 +17,7 @@ router.post(
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
       return res.status(400).json({
+        status: 400,
         errors: errors.array(),
       })
     }
@@ -26,6 +28,7 @@ router.post(
       let user = await User.findOne({username})
       if (user) {
         return res.status(400).json({
+          status: 400,
           message: 'User already exist',
         })
       }
@@ -58,7 +61,7 @@ router.post(
         })
       })
     } catch (error) {
-      res.status(500).send('Error in Saving')
+      res.status(500).json({status: 500, message: 'Error in Saving'})
     }
   },
 )
@@ -75,6 +78,7 @@ router.post(
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
       return res.status(400).json({
+        status: 400,
         errors: errors.array,
       })
     }
@@ -86,7 +90,8 @@ router.post(
 
       if (!user) {
         return res.status(400).json({
-          errors: 'User does not exist',
+          status: 400,
+          message: 'User does not exist',
         })
       }
 
@@ -94,7 +99,8 @@ router.post(
 
       if (!isMatch) {
         return res.status(400).json({
-          erros: 'Invalid Password',
+          status: 400,
+          message: 'Invalid Password',
         })
       }
 
@@ -127,10 +133,27 @@ router.post(
       )
     } catch (error) {
       res.status(500).json({
+        status: 500,
         message: 'Server Error',
       })
     }
   },
 )
+
+router.get('/me', auth, async (req, res) => {
+  try {
+    const {username, _id, createdAt} = await User.findById(req.user.id)
+    res.status(200).json({
+      status: 200,
+      data: {
+        _id,
+        username,
+        createdAt,
+      },
+    })
+  } catch (e) {
+    res.status(400).send({status: 400, message: 'Error in Fetching user'})
+  }
+})
 
 module.exports = router
