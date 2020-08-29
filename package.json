@@ -27,6 +27,10 @@
     "nodemon": "^2.0.4",
     "prettier": "^2.0.5"
   },
+  "engines": {
+    "node": "13.10.1",
+    "yarn": "1.22.4"
+  },
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged"
