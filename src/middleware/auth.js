@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken')
 
-module.exports = (req, res, next) => {
+function authMiddleware(req, res, next) {
   const token = req.header('token')
   if (!token) return res.status(401).json({status: 401, message: 'Auth Error'})
   try {
@@ -11,3 +11,5 @@ module.exports = (req, res, next) => {
     res.status(500).send({status: 500, message: 'Invalid Token'})
   }
 }
+
+module.exports = authMiddleware

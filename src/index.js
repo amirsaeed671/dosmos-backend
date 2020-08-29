@@ -2,18 +2,18 @@ require('dotenv').config()
 
 const express = require('express')
 const bodyParser = require('body-parser')
-const user = require('./routes/user')
+const getRouter = require('./routes')
 const cors = require('cors')
 const connectDB = require('./db/config')
 const app = express()
 
-// experss middlewares
+// express middlewares
 app.use(cors())
 app.use(bodyParser.json())
 
 const port = process.env.PORT || 3000
 
-app.use('/user', user)
+app.use('/', getRouter())
 
 connectDB(() => {
   app.listen(port, () => {
